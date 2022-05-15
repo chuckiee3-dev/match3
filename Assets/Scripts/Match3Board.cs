@@ -41,6 +41,40 @@ public class Match3Board
         var tileListToDestroy = GetTilesToDestroy(row, col);
         if(tileListToDestroy.Count < 2) return;
         DestroyTiles(tileListToDestroy);
+        DropExistingTiles();
+        //SpawnMoreTiles
+    }
+
+    private void DropExistingTiles()
+    {
+        //No need to check bottom row for drop
+        for (int i = 1; i < _size; i++)
+        {
+            for (int j = 0; j < _size; j++)
+            {
+                int k = 0;
+                var tile = _tiles[i, j];
+                if(tile.Type != TileType.Empty)
+                {
+                    int currentRow = i;
+                    while (k < _size && IsBottomNeighborEmpty(currentRow, j))
+                    {
+                        currentRow--;
+                        k++;
+                    }
+                    //Found out that below exists for swapping 2 array elements
+                    (_tiles[currentRow, j], _tiles[currentRow + k, j]) = (_tiles[currentRow + k, j], _tiles[currentRow, j]);
+                    _tiles[currentRow, j].DroppedBy(k);
+                }
+            }
+        }
+        Match3Actions.ExistingTilesDropped();
+    }
+
+    private bool IsBottomNeighborEmpty(int row, int col)
+    {
+        if (row == 0) return false;
+        return _tiles[row - 1, col].Type == TileType.Empty;
     }
 
     private void DestroyTiles(List<Vector2Int> tileListToDestroy)
@@ -159,5 +193,10 @@ public class Match3Board
             builder.Append("\n");
         }
         return builder.ToString();
+    }
+
+    public void ResetDropFlag(int row, int col)
+    {
+        _tiles[row, col].HasDropped = false;
     }
 }

@@ -28,7 +28,6 @@ public class BoardBehaviour : MonoBehaviour
     {
         Vector3 startPosition = Vector3.right * boardSize + Vector3.up * boardSize;
         startPosition /= -2;
-        
         for (int i = 0; i < boardSize ; i++)
         {
             for (int j = 0; j < boardSize; j++)
@@ -62,15 +61,37 @@ public class BoardBehaviour : MonoBehaviour
         }
     }
 
+    private void MoveExistingTiles()
+    {
+        foreach (var tile in _board.Tiles)
+        {
+            //i row j column
+            if (tile.HasDropped)
+            {
+                
+                int row = tile.Position.x;
+                int col = tile.Position.y;
+                _board.ResetDropFlag(row, col);
+                var tmp = _tileVisuals[row + tile.DropAmount, col];
+                 tmp.DropBy(tile.DropAmount);
+                 _tileVisuals[row + tile.DropAmount, col] = _tileVisuals[row, col];
+                _tileVisuals[row , col] = tmp;
+            }
+        }
+    }
     private void OnEnable()
     {
         Match3Actions.OnClickTile += ClickedTileAtPosition;
         Match3Actions.OnTilesDestroyed += DestroyTiles;
+        Match3Actions.OnExistingTilesDropped += MoveExistingTiles;
     }
+
+
     private void OnDisable()
     {
         Match3Actions.OnClickTile -= ClickedTileAtPosition;
         Match3Actions.OnTilesDestroyed -= DestroyTiles;
+        Match3Actions.OnExistingTilesDropped -= MoveExistingTiles;
     }
     
     private void DestroyTiles(List<Vector2Int> positions)
