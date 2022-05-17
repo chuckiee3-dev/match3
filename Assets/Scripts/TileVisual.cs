@@ -37,6 +37,10 @@ public class TileVisual : MonoBehaviour
     public void DropBy(int tileDropAmount)
     {
         _pos.x -= tileDropAmount;
+        AnimateDropBy(tileDropAmount);
+    }
+    public void AnimateDropBy(int tileDropAmount)
+    {
         transform.DOMoveY(transform.position.y - tileDropAmount, .4f);
     }
     #if UNITY_EDITOR

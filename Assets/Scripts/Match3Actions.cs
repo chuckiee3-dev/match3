@@ -4,21 +4,27 @@ using UnityEngine;
 
 public static class Match3Actions
 {
-   public static Action<List<Vector2Int>> OnTilesDestroyed;
-   public static Action<Vector2Int> OnClickTile;
-   public static Action OnExistingTilesDropped;
+   public static Action<List<Vector2Int>> onTilesDestroyed;
+   public static Action<Vector2Int> onClickTile;
+   public static Action onExistingTilesDropped;
+   public static Action<List<Vector2Int>> onTilesFilledFromAbove;
 
    public static void TilesDestroyed(List<Vector2Int> positions)
    {
-      OnTilesDestroyed?.Invoke(positions);
+      onTilesDestroyed?.Invoke(positions);
    }
 
    public static void ClickedTile(Vector2Int pos)
    {
-      OnClickTile.Invoke(pos);
+      onClickTile.Invoke(pos);
    }
    public static void ExistingTilesDropped()
    {
-      OnExistingTilesDropped.Invoke();
+      onExistingTilesDropped.Invoke();
+   }
+
+   public static void TilesFilledFromAbove(List<Vector2Int> filledTilePositions)
+   {
+      onTilesFilledFromAbove?.Invoke(filledTilePositions);
    }
 }

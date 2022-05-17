@@ -4,17 +4,23 @@ using UnityEngine;
 public class Match3Tile
 {
     protected TileType type;
-    private Vector2Int position;
+    private Vector2Int _position;
     private bool _searched;
     private int _dropAmount;
-    private bool hasDropped;
-    public bool HasDropped
+    private bool _hasDropped;
+    #region Getters and Setters
+    public Vector2Int Position
     {
-        get => hasDropped;
-        set => hasDropped = value;
+        get => _position;
+        set => _position = value;
     }
 
-    public Vector2Int Position => position;
+    public bool HasDropped
+    {
+        get => _hasDropped;
+        set => _hasDropped = value;
+    }
+
     public int DropAmount
     {
         get => _dropAmount;
@@ -23,7 +29,7 @@ public class Match3Tile
 
     public Match3Tile(Vector2Int pos)
     {
-        position = pos;
+        _position = pos;
         _searched = false;
         type = TileType.None;
         _dropAmount = 0;
@@ -62,13 +68,18 @@ public class Match3Tile
         }
     }
 
+    
+
+    #endregion
+
     public void DroppedBy(int dropAmount)
     {
         if (dropAmount > 0)
         {
-            hasDropped = true;
+            _hasDropped = true;
         }
         _dropAmount = dropAmount;
-        position.x -= dropAmount;
+        _position.x -= dropAmount;
     }
+
 }

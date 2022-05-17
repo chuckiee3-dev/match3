@@ -61,7 +61,7 @@ public class BoardBehaviour : MonoBehaviour
         }
     }
 
-    private void MoveExistingTiles()
+    private void MoveExistingDroppedTiles()
     {
         foreach (var tile in _board.Tiles)
         {
@@ -71,27 +71,52 @@ public class BoardBehaviour : MonoBehaviour
                 
                 int row = tile.Position.x;
                 int col = tile.Position.y;
-                _board.ResetDropFlag(row, col);
                 var tmp = _tileVisuals[row + tile.DropAmount, col];
                  tmp.DropBy(tile.DropAmount);
                  _tileVisuals[row + tile.DropAmount, col] = _tileVisuals[row, col];
                 _tileVisuals[row , col] = tmp;
+                _board.ResetDropFlag(row, col);
             }
+        }
+    }
+    
+    private void MoveNewDroppedTiles(List<Vector2Int> positionsToFill)
+    {
+        Vector3 startPosition = Vector3.right * boardSize + Vector3.up * boardSize;
+        startPosition /= -2;
+        for (int i = 0; i < boardSize ; i++)
+        {
+            for (int j = 0; j < boardSize; j++)
+            {
+                if(_board.Tiles[i,j].HasDropped)
+                {
+                    var posToDrop = startPosition + Vector3.right * j + Vector3.up * i;
+                    _tileVisuals[i, j] = Instantiate(tilePrefab, posToDrop + Vector3.up * _board.Tiles[i, j].DropAmount, quaternion.identity);
+                    _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
+                    _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
+                    _tileVisuals[i,j].AnimateDropBy(_board.Tiles[i, j].DropAmount);
+                    _board.ResetDropFlag(i, j);
+                }
+            }
+
         }
     }
     private void OnEnable()
     {
-        Match3Actions.OnClickTile += ClickedTileAtPosition;
-        Match3Actions.OnTilesDestroyed += DestroyTiles;
-        Match3Actions.OnExistingTilesDropped += MoveExistingTiles;
+        Match3Actions.onClickTile += ClickedTileAtPosition;
+        Match3Actions.onTilesDestroyed += DestroyTiles;
+        Match3Actions.onExistingTilesDropped += MoveExistingDroppedTiles;
+        Match3Actions.onTilesFilledFromAbove += MoveNewDroppedTiles;
     }
+
 
 
     private void OnDisable()
     {
-        Match3Actions.OnClickTile -= ClickedTileAtPosition;
-        Match3Actions.OnTilesDestroyed -= DestroyTiles;
-        Match3Actions.OnExistingTilesDropped -= MoveExistingTiles;
+        Match3Actions.onClickTile -= ClickedTileAtPosition;
+        Match3Actions.onTilesDestroyed -= DestroyTiles;
+        Match3Actions.onExistingTilesDropped -= MoveExistingDroppedTiles;
+        Match3Actions.onTilesFilledFromAbove += MoveNewDroppedTiles;
     }
     
     private void DestroyTiles(List<Vector2Int> positions)

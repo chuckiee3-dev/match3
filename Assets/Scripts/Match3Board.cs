@@ -7,6 +7,7 @@ public class Match3Board
     private readonly int _size;
     private readonly Match3Tile[,] _tiles;
     public Match3Tile[,] Tiles => _tiles;
+    private TileType[] _availableTileTypes;
     public Match3Board(int size, TileType[] availableTileTypes)
     {
         _size = size;
@@ -18,15 +19,22 @@ public class Match3Board
                 _tiles[i, j] = new Match3Tile(new Vector2Int(i, j));
             }   
         }
-        SetRandomTileTypeForAllTiles(availableTileTypes);
+
+        _availableTileTypes = availableTileTypes;
+        SetRandomTileTypeForAllTiles();
     }
 
-    private void SetRandomTileTypeForAllTiles(TileType[] availableTileTypes)
+    private void SetRandomTileTypeForAllTiles()
     {
         foreach (var tile in _tiles)
         {
-            tile.Type = availableTileTypes[Random.Range(0, availableTileTypes.Length)];
+            tile.Type = GetRandomTileType();
         }
+    }
+
+    private TileType GetRandomTileType()
+    {
+        return _availableTileTypes[Random.Range(0, _availableTileTypes.Length)];
     }
 
     public void ClickedOnTile(int row, int col)
@@ -42,8 +50,19 @@ public class Match3Board
         if(tileListToDestroy.Count < 2) return;
         DestroyTiles(tileListToDestroy);
         DropExistingTiles();
-        //SpawnMoreTiles
+        FillEmptySlots();
     }
+
+    private void DestroyTiles(List<Vector2Int> tileListToDestroy)
+    {
+        for (int i = 0; i < tileListToDestroy.Count; i++)
+        {
+            var tilePos = tileListToDestroy[i];
+            _tiles[tilePos.x, tilePos.y].Type = TileType.Empty;
+        }
+        Match3Actions.TilesDestroyed(tileListToDestroy);
+    }
+
 
     private void DropExistingTiles()
     {
@@ -57,7 +76,7 @@ public class Match3Board
                 if(tile.Type != TileType.Empty)
                 {
                     int currentRow = i;
-                    while (k < _size && IsBottomNeighborEmpty(currentRow, j))
+                    while (currentRow > 0 && k < _size-1 && IsBottomNeighborEmpty(currentRow, j))
                     {
                         currentRow--;
                         k++;
@@ -70,22 +89,35 @@ public class Match3Board
         }
         Match3Actions.ExistingTilesDropped();
     }
+    private void FillEmptySlots()
+    {
+        List<Vector2Int> filledTilePositions = new List<Vector2Int>();
 
+        for (int i = 0; i < _size; i++)
+        {
+            for (int j = 0; j < _size; j++)
+            {
+                var tile = _tiles[i, j];
+                if (tile.Type == TileType.Empty)
+                {
+                    tile.Type = GetRandomTileType();
+                    tile.Position = new Vector2Int(i, j);
+                    tile.HasDropped = true;
+                    tile.DropAmount = _size;
+                    filledTilePositions.Add(tile.Position);
+                }  
+            }
+        }
+
+        Match3Actions.TilesFilledFromAbove(filledTilePositions);
+
+    }
     private bool IsBottomNeighborEmpty(int row, int col)
     {
         if (row == 0) return false;
         return _tiles[row - 1, col].Type == TileType.Empty;
     }
 
-    private void DestroyTiles(List<Vector2Int> tileListToDestroy)
-    {
-        for (int i = 0; i < tileListToDestroy.Count; i++)
-        {
-            var tilePos = tileListToDestroy[i];
-            _tiles[tilePos.x, tilePos.y].Type = TileType.Empty;
-        }
-        Match3Actions.TilesDestroyed(tileListToDestroy);
-    }
 
     public bool HasTileAnyMatchingNeighbor(int row, int col)
     {
@@ -198,5 +230,6 @@ public class Match3Board
     public void ResetDropFlag(int row, int col)
     {
         _tiles[row, col].HasDropped = false;
+        _tiles[row, col].DropAmount = 0;
     }
 }
