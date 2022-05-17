@@ -1,13 +1,18 @@
-using System;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 
 public class TileVisual : MonoBehaviour
 {
+    private GameSettings _settings;
     private SpriteRenderer _sr;
     private Vector2Int _pos;
     private Collider2D _collider;
+
+    public void SetSettings(GameSettings settings)
+    {
+        _settings = settings;
+    }
     private void Awake()
     {
         _sr = GetComponent<SpriteRenderer>();
@@ -28,12 +33,6 @@ public class TileVisual : MonoBehaviour
         SetColor(Color.clear);
         _collider.enabled = false;
     }
-
-    private void OnMouseDown()
-    {
-        Debug.Log("Clicked on: "+ _pos.ToString());
-        Match3Actions.ClickedTile(_pos);
-    }
     public void DropBy(int tileDropAmount)
     {
         _pos.x -= tileDropAmount;
@@ -41,7 +40,11 @@ public class TileVisual : MonoBehaviour
     }
     public void AnimateDropBy(int tileDropAmount)
     {
-        transform.DOMoveY(transform.position.y - tileDropAmount, .4f);
+        transform.DOMoveY(transform.position.y - tileDropAmount, _settings.animationDuration).SetEase(_settings.ease);
+    }
+    public void Clicked()
+    {
+        Match3Actions.ClickedTile(_pos);
     }
     #if UNITY_EDITOR
     private void OnDrawGizmos()

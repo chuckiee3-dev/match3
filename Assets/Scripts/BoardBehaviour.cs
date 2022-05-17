@@ -5,34 +5,37 @@ using UnityEngine;
 
 public class BoardBehaviour : MonoBehaviour
 {
-    
-    [Range(5,9)]
-    [SerializeField] private int boardSize = 5;
-
-    [SerializeField] private TileType[] tileTypes = { TileType.Red , TileType.Green, TileType.Blue, TileType.Yellow};
-    
+    [SerializeField]private GameSettings settings;
     private Match3Board _board;
-
-    [SerializeField] private TileVisual tilePrefab;
     private TileVisual[,] _tileVisuals;
+    private GameInteractionCanvas _gameInteractionCanvas;
     private void Awake()
     {
-        _board = new Match3Board(boardSize, tileTypes);
-        _tileVisuals = new TileVisual[boardSize, boardSize];
-
+        _board = new Match3Board(settings.size, settings.tileTypes);
+        _tileVisuals = new TileVisual[settings.size, settings.size];
+    
         GenerateVisuals();
+        SetupBlocker();
         Debug.Log(_board);
+    }
+
+    private void SetupBlocker()
+    {
+        _gameInteractionCanvas = Instantiate(settings.gameInteractionCanvasPrefab);
+        _gameInteractionCanvas.SetBlockDuration(settings.animationDuration);
     }
 
     private void GenerateVisuals()
     {
-        Vector3 startPosition = Vector3.right * boardSize + Vector3.up * boardSize;
+        Vector3 startPosition = Vector3.right * settings.size + Vector3.up * settings.size;
         startPosition /= -2;
-        for (int i = 0; i < boardSize ; i++)
+        for (int i = 0; i < settings.size ; i++)
         {
-            for (int j = 0; j < boardSize; j++)
+            for (int j = 0; j < settings.size; j++)
             {
-                _tileVisuals[i, j] = Instantiate(tilePrefab,startPosition+ Vector3.right *j + Vector3.up* i, quaternion.identity);
+                _tileVisuals[i, j] = Instantiate(settings.tilePrefab,startPosition+ Vector3.right *j + Vector3.up* i, quaternion.identity);
+                _tileVisuals[i, j].transform.SetParent(transform);
+                _tileVisuals[i,j].SetSettings(settings);
                 _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
                 _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
             }
@@ -82,16 +85,18 @@ public class BoardBehaviour : MonoBehaviour
     
     private void MoveNewDroppedTiles(List<Vector2Int> positionsToFill)
     {
-        Vector3 startPosition = Vector3.right * boardSize + Vector3.up * boardSize;
+        Vector3 startPosition = Vector3.right * settings.size + Vector3.up * settings.size;
         startPosition /= -2;
-        for (int i = 0; i < boardSize ; i++)
+        for (int i = 0; i < settings.size ; i++)
         {
-            for (int j = 0; j < boardSize; j++)
+            for (int j = 0; j < settings.size; j++)
             {
                 if(_board.Tiles[i,j].HasDropped)
                 {
                     var posToDrop = startPosition + Vector3.right * j + Vector3.up * i;
-                    _tileVisuals[i, j] = Instantiate(tilePrefab, posToDrop + Vector3.up * _board.Tiles[i, j].DropAmount, quaternion.identity);
+                    _tileVisuals[i, j] = Instantiate(settings.tilePrefab, posToDrop + Vector3.up * _board.Tiles[i, j].DropAmount, quaternion.identity);
+                    _tileVisuals[i, j].transform.SetParent(transform);
+                    _tileVisuals[i,j].SetSettings(settings);
                     _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
                     _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
                     _tileVisuals[i,j].AnimateDropBy(_board.Tiles[i, j].DropAmount);
