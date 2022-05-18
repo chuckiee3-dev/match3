@@ -57,7 +57,7 @@ public class QuestTracker
         }
     }
     
-    private void ReduceMoves(Vector2Int pos)
+    private void ReduceMoves()
     {
         if(_movesRemaining == 0) return;
         _movesRemaining--;
@@ -66,13 +66,13 @@ public class QuestTracker
     public void StartTracking()
     {
         Match3Actions.onTileTypeOfAmountDestroyed += UpdateQuestStatus;
-        Match3Actions.onClickTile += ReduceMoves;
+        Match3Actions.onUsedMove += ReduceMoves;
     }
 
     public void StopTracking()
     {
         Match3Actions.onTileTypeOfAmountDestroyed -= UpdateQuestStatus;
-        Match3Actions.onClickTile -= ReduceMoves;
+        Match3Actions.onUsedMove -= ReduceMoves;
     }
 
 

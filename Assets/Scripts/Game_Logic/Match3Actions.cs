@@ -6,6 +6,7 @@ public static class Match3Actions
 {
    public static Action<List<Vector2Int>> onTilesDestroyed;
    public static Action<Vector2Int> onClickTile;
+   public static Action onUsedMove;
    public static Action onExistingTilesDropped;
    public static Action<List<Vector2Int>> onTilesFilledFromAbove;
    public static Action onBoardShuffle;
@@ -22,6 +23,11 @@ public static class Match3Actions
    public static void ClickedTile(Vector2Int pos)
    {
       onClickTile.Invoke(pos);
+   }
+
+   public static void UsedMove()
+   {
+      onUsedMove?.Invoke();
    }
    public static void ExistingTilesDropped()
    {

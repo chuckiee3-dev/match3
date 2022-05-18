@@ -41,42 +41,47 @@ public class Match3Board
 
     public void ClickedOnTile(int row, int col)
     {
-        if (_tiles[row,col].Type == TileType.None ||
-            _tiles[row, col].Type == TileType.Empty) return;
+        var clickedTile = _tiles[row, col];
+        
+        if (clickedTile.IsValid()) return;
         
         //We need at least 2 connected tiles, so no connected neighbors means
         //no need to check for anything else
-        if(!HasTileAnyMatchingNeighbor(row, col)) return;
         
         var tileListToDestroy = GetTilesToDestroy(row, col);
+        
         if(tileListToDestroy.Count < 2) return;
+        
+        Match3Actions.UsedMove();
+        
         DestroyTiles(tileListToDestroy);
         DropExistingTiles();
         FillEmptySlots();
+        
         if (!IsThereValidMove())
         {
             Shuffle();
         }
     }
 
-    public bool IsThereValidMove()
+    private bool IsThereValidMove()
     {
         for (int i = 0; i < _size; i++)
         {
             for (int j = 0; j < _size; j++)
             {
-                if (HasTileAnyMatchingNeighbor(i, j))
+                if (HasTileAnyMatchingNeighbor(_tiles[i,j]))
                 {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
     internal void Shuffle()
     {
+        //Fisher–Yates algorithm
             System.Random random = new System.Random();
             int lengthRow = _tiles.GetLength(1);
 
@@ -166,32 +171,32 @@ public class Match3Board
     }
 
 
-    public bool HasTileAnyMatchingNeighbor(int row, int col)
+    private bool HasTileAnyMatchingNeighbor(Match3Tile tile)
     {
-        if (IsLeftNeighborTheSameType(row, col)) return true;
-        if (IsRightNeighborTheSameType(row, col)) return true;
-        if (IsBottomNeighborTheSameType(row, col)) return true;
-        if (IsTopNeighborTheSameType(row, col)) return true;
+        if (IsLeftNeighborValidAndTheSameType(tile)) return true;
+        if (IsRightNeighborValidAndTheSameType(tile)) return true;
+        if (IsBottomNeighborValidAndTheSameType(tile)) return true;
+        if (IsTopNeighborValidAndTheSameType(tile)) return true;
         return false;
     }
 
-    private bool IsLeftNeighborTheSameType(int row, int col)
+    private bool IsLeftNeighborValidAndTheSameType(Match3Tile tile)
     {
-        return col > 0 && _tiles[row, col].Type == _tiles[row, col -1].Type;
+        return tile.Position.y > 0 && tile == LeftOf(tile);
     }
 
-    private bool IsRightNeighborTheSameType(int row, int col)
+    private bool IsRightNeighborValidAndTheSameType(Match3Tile tile)
     {
-        return col < _size - 1 && _tiles[row, col].Type == _tiles[row , col + 1].Type;
+        return tile.Position.y < _size - 1 && tile == RightOf(tile);
     }
-    private bool IsTopNeighborTheSameType(int row, int col)
+    private bool IsTopNeighborValidAndTheSameType(Match3Tile tile)
     {
-        return row < _size - 1 && _tiles[row, col].Type == _tiles[row + 1, col].Type;
+        return tile.Position.x < _size - 1 && tile == TopOf(tile);
     }
 
-    private bool IsBottomNeighborTheSameType(int row, int col)
+    private bool IsBottomNeighborValidAndTheSameType(Match3Tile tile)
     {
-        return row > 0 && _tiles[row, col].Type == _tiles[row - 1, col].Type;
+        return tile.Position.x > 0 && tile == BottomOf(tile);
     }
 
     public List<Vector2Int> GetTilesToDestroy(int row, int col)
@@ -211,44 +216,35 @@ public class Match3Board
             }
             currentTile.Searched = true;
             
-            int r = currentTile.Position.x;
-            int c = currentTile.Position.y;
-            
-            //Add neighbors if !searched and valid
-            if (IsLeftNeighborTheSameType(r, c) && !_tiles[r, c - 1].Searched)
-            {
-                var neighbor = _tiles[r, c - 1];
-                tilesToSearch.Enqueue(neighbor);
-                tilePositions.Add(neighbor.Position);
-                neighbor.Searched = true;
+            if(IsLeftNeighborValidAndTheSameType(currentTile)){
+                ProcessNeighbor(currentTile, LeftOf(currentTile), tilesToSearch, tilePositions);
             }
-            
-            if (IsRightNeighborTheSameType(r, c) && !_tiles[r, c + 1].Searched)
-            {
-                var neighbor = _tiles[r, c + 1];
-                tilesToSearch.Enqueue(neighbor);
-                tilePositions.Add(neighbor.Position);
-                neighbor.Searched = true;
+            if(IsRightNeighborValidAndTheSameType(currentTile)){
+                ProcessNeighbor(currentTile, RightOf(currentTile), tilesToSearch, tilePositions);
             }
-            
-            if (IsTopNeighborTheSameType(r, c) && !_tiles[r + 1, c].Searched)
+
+            if (IsTopNeighborValidAndTheSameType(currentTile))
             {
-                var neighbor = _tiles[r + 1, c];
-                tilesToSearch.Enqueue(neighbor);
-                tilePositions.Add(neighbor.Position);
-                neighbor.Searched = true;
+                ProcessNeighbor(currentTile, TopOf(currentTile), tilesToSearch, tilePositions);
             }
-            
-            if (IsBottomNeighborTheSameType(r, c) && !_tiles[r - 1, c].Searched)
+
+            if (IsBottomNeighborValidAndTheSameType(currentTile))
             {
-                var neighbor = _tiles[r - 1, c];
-                tilesToSearch.Enqueue(neighbor);
-                tilePositions.Add(neighbor.Position);
-                neighbor.Searched = true;
+                ProcessNeighbor(currentTile, BottomOf(currentTile), tilesToSearch, tilePositions);
             }
+
         }
 
         return tilePositions;
+    }
+
+    private void ProcessNeighbor(Match3Tile currentTile, Match3Tile neighbor,
+        Queue<Match3Tile> tilesToSearch, List<Vector2Int> tilePositions)
+    {
+        if(currentTile != neighbor || neighbor.Searched) return;
+        tilesToSearch.Enqueue(neighbor);
+        tilePositions.Add(neighbor.Position);
+        neighbor.Searched = true;
     }
 
     private void ResetAllTilesSearchStatus()
@@ -259,6 +255,22 @@ public class Match3Board
         }
     }
 
+    private Match3Tile TopOf(Match3Tile tile)
+    {
+        return _tiles[tile.Position.x +1 , tile.Position.y ];
+    }
+    private Match3Tile BottomOf(Match3Tile tile)
+    {
+        return _tiles[tile.Position.x - 1 , tile.Position.y ];
+    }
+    private Match3Tile RightOf(Match3Tile tile)
+    {
+        return _tiles[tile.Position.x, tile.Position.y + 1];
+    }
+    private Match3Tile LeftOf(Match3Tile tile)
+    {
+        return _tiles[tile.Position.x, tile.Position.y - 1];
+    }
     public void ResetDropFlag(int row, int col)
     {
         _tiles[row, col].HasDropped = false;
@@ -283,8 +295,4 @@ public class Match3Board
         return builder.ToString();
     }
 
-    public TileType GetTypeAt(Vector2Int pos)
-    {
-        return _tiles[pos.x, pos.y].Type;
-    }
 }

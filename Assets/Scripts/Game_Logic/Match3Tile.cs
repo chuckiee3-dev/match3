@@ -1,13 +1,27 @@
 using System;
 using UnityEngine;
 
-public class Match3Tile
+public class Match3Tile 
 {
     protected TileType type;
     private Vector2Int _position;
     private bool _searched;
     private int _dropAmount;
     private bool _hasDropped;
+    
+    
+    public static bool operator == (Match3Tile a, Match3Tile b){
+        if (ReferenceEquals(null, a)) return false;
+        if (ReferenceEquals(null, b)) return false;
+        if (ReferenceEquals(a, b)) return true;
+        return a.type == b.type;
+    }
+
+    public static bool operator !=(Match3Tile a, Match3Tile b)
+    {
+        return !(a == b);
+    }
+
     #region Getters and Setters
     public Vector2Int Position
     {
@@ -67,9 +81,6 @@ public class Match3Tile
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    
-
     #endregion
 
     public void DroppedBy(int dropAmount)
@@ -81,5 +92,11 @@ public class Match3Tile
         _dropAmount = dropAmount;
         _position.x -= dropAmount;
     }
+
+    public bool IsValid()
+    {
+        return Type == TileType.None || Type == TileType.Empty;
+    }
+
 
 }
