@@ -15,5 +15,6 @@ MonoBehaviour:
   boardSize: 9
   _tileTypes: 02000000030000000400000005000000
   prefabList: {fileID: 11400000, guid: e387d91b77c68a84ab9851cc1894e6ab, type: 2}
+  _palette: {fileID: 11400000, guid: 7b0b890845c1109499c80efc8df96cf8, type: 2}
   _animationDuration: 0.4
   _ease: 30

@@ -19,9 +19,10 @@ public class TileVisual : MonoBehaviour
         _collider = GetComponent<Collider2D>();
     }
 
-    public void SetColor(Color color)
+    public void SetVisual(TileVisualData data)
     {
-        _sr.color = color;
+        _sr.color = data.color;
+        _sr.sprite = data.sprite;
     }
 
     public void SetPos(Vector2Int pos)
@@ -30,7 +31,7 @@ public class TileVisual : MonoBehaviour
     }
     public void GetDestroyed()
     {
-        SetColor(Color.clear);
+        _sr.color = Color.clear;
         _collider.enabled = false;
     }
     public void DropBy(int tileDropAmount)

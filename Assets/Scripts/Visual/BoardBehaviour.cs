@@ -10,12 +10,16 @@ public class BoardBehaviour : MonoBehaviour
     private Match3Board _board;
     private TileVisual[,] _tileVisuals;
     private GameInteractionCanvas _gameInteractionCanvas;
+    [SerializeField] private SpriteRenderer boardBgRenderer;
+    [SerializeField] private SpriteRenderer boardMaskRenderer;
 
     public void Setup(GameSettings settings)
     {
         _settings = settings;
         Assert.IsNotNull(settings, "You should assign Settings variable to create a board.");
         _board = new Match3Board(settings.size, settings.tileTypes);
+        boardBgRenderer.size = Vector2.one *(settings.size + .5f);
+        boardMaskRenderer.transform.localScale = Vector3.one * (settings.size + .5f);
         _tileVisuals = new TileVisual[settings.size, settings.size];
     
         GenerateVisuals();
@@ -45,7 +49,7 @@ public class BoardBehaviour : MonoBehaviour
         _tileVisuals[i, j] = Instantiate(_settings.tilePrefab, pos, quaternion.identity);
         _tileVisuals[i, j].transform.SetParent(transform);
         _tileVisuals[i,j].SetSettings(_settings);
-        _tileVisuals[i,j].SetColor(TileUtils.TileTypeToColor(_board.Tiles[i,j].Type));
+        _tileVisuals[i,j].SetVisual(_settings.GetDataForType(_board.Tiles[i,j].Type));
         _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
     }
 
@@ -91,7 +95,7 @@ public class BoardBehaviour : MonoBehaviour
 
     private Vector3 GetStartPos()
     {
-        var startPosition = Vector3.right * _settings.size + Vector3.up * _settings.size;
+        var startPosition = Vector3.right * _settings.size + Vector3.up * (_settings.size+1);
         startPosition /= -2;
         startPosition.x += .5f;
         return startPosition;
@@ -103,7 +107,7 @@ public class BoardBehaviour : MonoBehaviour
         {
             for (int j = 0; j < _settings.size; j++)
             {
-                _tileVisuals[i,j].SetColor(TileUtils.TileTypeToColor(_board.Tiles[i,j].Type));
+                _tileVisuals[i,j].SetVisual(_settings.GetDataForType(_board.Tiles[i,j].Type));
             }
         }
     }

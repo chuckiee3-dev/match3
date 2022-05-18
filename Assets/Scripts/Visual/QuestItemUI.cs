@@ -8,14 +8,15 @@ public class QuestItemUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI amountTMP;
     [SerializeField] private Image completedCheck;
     private bool _completed;
-    public void Setup(QuestItem item)
+    public void Setup(QuestItem item, SpritePalette palette)
     {
         completedCheck.enabled = false;
         targetItemImg.enabled = true;
         amountTMP.enabled = true;
         _completed = false;
-        
-        targetItemImg.color = TileUtils.TileTypeToColor(item.TypeToDestroy);
+        TileVisualData data = palette.GetDataForType(item.TypeToDestroy);
+        targetItemImg.sprite = data.sprite;
+        targetItemImg.color = data.color;
         amountTMP.text = item.countToDestroy.ToString();
     } 
     public void UpdateAmount(int newAmount)

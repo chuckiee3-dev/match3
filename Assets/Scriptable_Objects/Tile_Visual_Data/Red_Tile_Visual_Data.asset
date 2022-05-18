@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6be0579fe6c140848ab15897f1c05ef2, type: 3}
+  m_Name: Red_Tile_Visual_Data
+  m_EditorClassIdentifier: 
+  _color: {r: 0.9528302, g: 0.18427375, b: 0.18427375, a: 1}
+  _sprite: {fileID: 21300000, guid: fdfb66323070d2241a95a753e1f93c8e, type: 3}

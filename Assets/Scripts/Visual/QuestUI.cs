@@ -15,7 +15,23 @@ public class QuestUI : MonoBehaviour
     private MovesLeftUI _movesLeftUI;
     
     private Dictionary<TileType, QuestItemUI> _questItemUIs;
-    
+    public void Setup(Quest quest, SpritePalette palette)
+    {
+        
+        _movesLeftUI = Instantiate(movesLeftUIPrefab, itemUIParent);
+        _movesLeftUI.SetMovesLeft(quest.totalMoves);
+        _questItemUIs = new Dictionary<TileType, QuestItemUI>();
+        foreach (var questItem in quest.questItems)
+        {
+            if (!_questItemUIs.ContainsKey(questItem.TypeToDestroy))
+            {
+                var item = Instantiate(itemUIPrefab, itemUIParent);
+                item.Setup(questItem, palette);
+                _questItemUIs.Add(questItem.TypeToDestroy, item);
+            }
+        }
+
+    }
     private void UpdateUI(Dictionary<TileType, int> remainingItems)
     {
         foreach (var key in _questItemUIs.Keys)
@@ -45,23 +61,7 @@ public class QuestUI : MonoBehaviour
         winUI.enabled = true;
     }
 
-    public void Setup(Quest quest)
-    {
-        
-        _movesLeftUI = Instantiate(movesLeftUIPrefab, itemUIParent);
-        _movesLeftUI.SetMovesLeft(quest.totalMoves);
-        _questItemUIs = new Dictionary<TileType, QuestItemUI>();
-        foreach (var questItem in quest.questItems)
-        {
-            if (!_questItemUIs.ContainsKey(questItem.TypeToDestroy))
-            {
-                var item = Instantiate(itemUIPrefab, itemUIParent);
-                item.Setup(questItem);
-                _questItemUIs.Add(questItem.TypeToDestroy, item);
-            }
-        }
-
-    }
+    
     private void OnEnable()
     {
         QuestActions.onQuestUpdated += UpdateUI;

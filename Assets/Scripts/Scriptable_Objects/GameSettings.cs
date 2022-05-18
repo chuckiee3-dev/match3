@@ -9,6 +9,7 @@ public class GameSettings : ScriptableObject
    [SerializeField] private int boardSize = 5;
    [SerializeField] private TileType[] _tileTypes = { TileType.Red , TileType.Green, TileType.Blue, TileType.Yellow};
    [SerializeField] private InGamePrefabList prefabList;
+   [SerializeField] private SpritePalette _palette;
    [Space(5)]
    [Header("Tile Animations")]
    [SerializeField] private float _animationDuration;
@@ -19,6 +20,12 @@ public class GameSettings : ScriptableObject
    public TileVisual tilePrefab => prefabList.tilePrefab;
    public GameInteractionCanvas gameInteractionCanvasPrefab => prefabList.gameInteractionCanvasPrefab;
    public QuestUI questUIPrefab => prefabList.questUIPrefab;
+   public SpritePalette palette => _palette;
    public float animationDuration => _animationDuration;
    public Ease ease=> _ease;
+
+   public TileVisualData GetDataForType(TileType type)
+   {
+      return _palette.GetDataForType(type);
+   }
 }

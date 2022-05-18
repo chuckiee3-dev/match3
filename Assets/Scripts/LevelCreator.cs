@@ -18,7 +18,7 @@ public class LevelCreator : MonoBehaviour
         _board.Setup(settings);
         _tracker = new QuestTracker(quest.quest);
         _questUI = Instantiate(settings.questUIPrefab);
-        _questUI.Setup(quest.quest);
+        _questUI.Setup(quest.quest, settings.palette);
         _camera = Camera.main;
         _camera.orthographicSize = settings.size;
     }
