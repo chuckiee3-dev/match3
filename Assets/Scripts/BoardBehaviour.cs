@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class BoardBehaviour : MonoBehaviour
 {
@@ -11,12 +12,12 @@ public class BoardBehaviour : MonoBehaviour
     private GameInteractionCanvas _gameInteractionCanvas;
     private void Awake()
     {
+        Assert.IsNotNull(settings, "You should assign Settings variable to create a board.");
         _board = new Match3Board(settings.size, settings.tileTypes);
         _tileVisuals = new TileVisual[settings.size, settings.size];
     
         GenerateVisuals();
         SetupBlocker();
-        Debug.Log(_board);
     }
 
     private void SetupBlocker()
@@ -33,14 +34,19 @@ public class BoardBehaviour : MonoBehaviour
         {
             for (int j = 0; j < settings.size; j++)
             {
-                _tileVisuals[i, j] = Instantiate(settings.tilePrefab,startPosition+ Vector3.right *j + Vector3.up* i, quaternion.identity);
-                _tileVisuals[i, j].transform.SetParent(transform);
-                _tileVisuals[i,j].SetSettings(settings);
-                _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
-                _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
+                SetupTileAtPosition(i, j, startPosition+ Vector3.right *j + Vector3.up* i);
             }
 
         }
+    }
+
+    private void SetupTileAtPosition(int i, int j, Vector3 pos)
+    {
+        _tileVisuals[i, j] = Instantiate(settings.tilePrefab, pos, quaternion.identity);
+        _tileVisuals[i, j].transform.SetParent(transform);
+        _tileVisuals[i,j].SetSettings(settings);
+        _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
+        _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
     }
 
     private Color TileTypeToColor(TileType type)
@@ -94,11 +100,9 @@ public class BoardBehaviour : MonoBehaviour
                 if(_board.Tiles[i,j].HasDropped)
                 {
                     var posToDrop = startPosition + Vector3.right * j + Vector3.up * i;
-                    _tileVisuals[i, j] = Instantiate(settings.tilePrefab, posToDrop + Vector3.up * _board.Tiles[i, j].DropAmount, quaternion.identity);
-                    _tileVisuals[i, j].transform.SetParent(transform);
-                    _tileVisuals[i,j].SetSettings(settings);
-                    _tileVisuals[i,j].SetColor(TileTypeToColor(_board.Tiles[i,j].Type));
-                    _tileVisuals[i,j].SetPos(new Vector2Int(i,j));
+                    
+                    SetupTileAtPosition(i,j, posToDrop + Vector3.up * _board.Tiles[i, j].DropAmount);
+                    
                     _tileVisuals[i,j].AnimateDropBy(_board.Tiles[i, j].DropAmount);
                     _board.ResetDropFlag(i, j);
                 }
@@ -135,7 +139,5 @@ public class BoardBehaviour : MonoBehaviour
     private void ClickedTileAtPosition(Vector2Int pos)
     {
         _board.ClickedOnTile(pos.x, pos.y);
-        Debug.Log("After click");
-        Debug.Log(_board);
     }
 }
