@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 710559f5cf4dfdb468f6c4dd9c7e7ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings: {fileID: 11400000, guid: 1976686b8ea82444a810c3397f22af1d, type: 2}
+  settings: {fileID: 11400000, guid: 3c44593d843526545b7b91b9b76d4a02, type: 2}
   boardPrefab: {fileID: 1474508767682447275, guid: c72399a7c4125f746ade323e99aeae25, type: 3}
   quest: {fileID: 11400000, guid: 585feacf13f44274ca1edbc7372b3f3f, type: 2}
 --- !u!4 &478653164

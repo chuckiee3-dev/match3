@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
     private BoardBehaviour _board;
     private QuestTracker _tracker;
     private QuestUI _questUI;
+    [CanBeNull] private Camera _camera;
     private void Awake()
     {
         _board = Instantiate(boardPrefab);
@@ -17,6 +19,8 @@ public class GameManager : MonoBehaviour
         _tracker = new QuestTracker(quest.quest);
         _questUI = Instantiate(settings.questUIPrefab);
         _questUI.Setup(quest.quest);
+        _camera = Camera.main;
+        _camera.orthographicSize = settings.size;
     }
 
     private void OnEnable()

@@ -31,6 +31,7 @@ public class BoardBehaviour : MonoBehaviour
     {
         Vector3 startPosition = Vector3.right * _settings.size + Vector3.up * _settings.size;
         startPosition /= -2;
+        startPosition.x += .5f;
         for (int i = 0; i < _settings.size ; i++)
         {
             for (int j = 0; j < _settings.size; j++)
@@ -133,15 +134,4 @@ public class BoardBehaviour : MonoBehaviour
         Match3Actions.onBoardShuffle -= ShuffleUpdateBoard;
     }
 
-    private void ShuffleBoard()
-    {
-        _board.Shuffle();
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            ShuffleBoard();
-        }
-    }
 }
