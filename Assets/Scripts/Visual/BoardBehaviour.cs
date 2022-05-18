@@ -29,9 +29,7 @@ public class BoardBehaviour : MonoBehaviour
 
     private void GenerateVisuals()
     {
-        Vector3 startPosition = Vector3.right * _settings.size + Vector3.up * _settings.size;
-        startPosition /= -2;
-        startPosition.x += .5f;
+        Vector3 startPosition = GetStartPos();
         for (int i = 0; i < _settings.size ; i++)
         {
             for (int j = 0; j < _settings.size; j++)
@@ -72,8 +70,7 @@ public class BoardBehaviour : MonoBehaviour
     
     private void MoveNewDroppedTiles(List<Vector2Int> positionsToFill)
     {
-        Vector3 startPosition = Vector3.right * _settings.size + Vector3.up * _settings.size;
-        startPosition /= -2;
+        Vector3 startPosition = GetStartPos();
         for (int i = 0; i < _settings.size ; i++)
         {
             for (int j = 0; j < _settings.size; j++)
@@ -91,6 +88,15 @@ public class BoardBehaviour : MonoBehaviour
 
         }
     }
+
+    private Vector3 GetStartPos()
+    {
+        var startPosition = Vector3.right * _settings.size + Vector3.up * _settings.size;
+        startPosition /= -2;
+        startPosition.x += .5f;
+        return startPosition;
+    }
+
     private void ShuffleUpdateBoard()
     {
         for (int i = 0; i < _settings.size; i++)

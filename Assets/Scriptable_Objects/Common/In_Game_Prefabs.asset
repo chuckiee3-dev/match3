@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34acaded6d8093e41a86fc070108b319, type: 3}
+  m_Name: In_Game_Prefabs
+  m_EditorClassIdentifier: 
+  _tilePrefab: {fileID: 1304293222999853603, guid: fe76ae6406d6e3445b6ff4b184b0e393, type: 3}
+  _gameInteractionCanvasPrefab: {fileID: 7724438725571184410, guid: 36cabce8f4b1a974b92baa6a13687d92, type: 3}
+  _questUIPrefab: {fileID: 6388230065385740718, guid: 9f61bcd42ffc585439c28fb3b3e79c9e, type: 3}

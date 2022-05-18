@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardSize: 9
   _tileTypes: 02000000030000000400000005000000
-  _tilePrefab: {fileID: 1304293222999853603, guid: fe76ae6406d6e3445b6ff4b184b0e393, type: 3}
-  _gameInteractionCanvasPrefab: {fileID: 7724438725571184410, guid: 36cabce8f4b1a974b92baa6a13687d92, type: 3}
-  _questUIPrefab: {fileID: 6388230065385740718, guid: 9f61bcd42ffc585439c28fb3b3e79c9e, type: 3}
+  prefabList: {fileID: 11400000, guid: e387d91b77c68a84ab9851cc1894e6ab, type: 2}
   _animationDuration: 0.4
   _ease: 30

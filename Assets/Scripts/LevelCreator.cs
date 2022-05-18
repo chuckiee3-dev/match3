@@ -2,7 +2,7 @@ using System;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class LevelCreator : MonoBehaviour
 {
     [SerializeField] private GameSettings settings;
     [SerializeField] private BoardBehaviour boardPrefab;
